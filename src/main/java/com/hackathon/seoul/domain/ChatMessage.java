@@ -18,8 +18,8 @@ public class ChatMessage {
     private AppUser user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "stage_id", nullable = false)
-    private Stage stage;
+    @JoinColumn(name = "quest_id", nullable = false)
+    private Quest quest;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -31,9 +31,9 @@ public class ChatMessage {
 
     protected ChatMessage() {}
 
-    public ChatMessage(AppUser user, Stage stage, Role role, String content) {
+    public ChatMessage(AppUser user, Quest quest, Role role, String content) {
         this.user = user;
-        this.stage = stage;
+        this.quest = quest;
         this.role = role;
         this.content = content;
         this.createdAt = LocalDateTime.now();

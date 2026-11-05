@@ -9,9 +9,9 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
-    List<ChatMessage> findByUserIdAndStageIdOrderByIdAsc(Long userId, Long stageId);
+    List<ChatMessage> findByUserIdAndQuestIdOrderByIdAsc(Long userId, Long questId);
 
     @Modifying
-    @Query("delete from ChatMessage m where m.user.id = :userId and m.stage.id = :stageId")
-    void deleteHistory(@Param("userId") Long userId, @Param("stageId") Long stageId);
+    @Query("delete from ChatMessage m where m.user.id = :userId and m.quest.id = :questId")
+    void deleteHistory(@Param("userId") Long userId, @Param("questId") Long questId);
 }

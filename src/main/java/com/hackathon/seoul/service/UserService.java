@@ -23,7 +23,7 @@ public class UserService {
         String nickname = (req == null || req.nickname() == null || req.nickname().isBlank()) ? "Traveler" : req.nickname();
         String language = (req == null || req.language() == null || req.language().isBlank()) ? "English" : req.language();
         String level = (req == null || req.level() == null || req.level().isBlank()) ? "BEGINNER" : req.level();
-        AppUser user = userRepo.save(new AppUser(nickname, language, level, props.initialCoins));
+        AppUser user = userRepo.save(new AppUser(nickname, language, level, props.initialCoins, props.freeDraws));
         return toResponse(user);
     }
 
@@ -33,6 +33,7 @@ public class UserService {
     }
 
     static UserResponse toResponse(AppUser u) {
-        return new UserResponse(u.getId(), u.getNickname(), u.getLanguage(), u.getLevel(), u.getCoins());
+        return new UserResponse(u.getId(), u.getNickname(), u.getLanguage(), u.getLevel(),
+                u.getCoins(), u.getFreeDraws(), u.getDrawsLeft());
     }
 }

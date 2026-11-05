@@ -1,30 +1,27 @@
 #!/usr/bin/env bash
-# 데모 흐름 한 번에 확인: 서버 켠 상태에서 ./scripts/demo-check.sh
+# 데모 흐름 한 번에 확인 (mock 모드): 서버 켠 상태에서 ./scripts/demo-check.sh
 set -e
 BASE=${BASE:-http://localhost:8080}
 JSON='Content-Type: application/json'
+post() { curl -s -X POST "$BASE$1" -H "$JSON" -d "$2"; echo; }
+say()  { post "/api/quests/$1/talk" "{\"userId\":$U,\"message\":\"$2\"}"; }
+ev()   { post "/api/quests/$1/event" "{\"userId\":$U,\"event\":\"$2\"}"; }
+start(){ post "/api/quests/$1/start" "{\"userId\":$U}"; }
 
-echo "== 1. 서버 상태"
-curl -s "$BASE/api/health"; echo
+echo "== 서버"; curl -s "$BASE/api/health"; echo
+U=$(curl -s -X POST "$BASE/api/users" -H "$JSON" -d '{"nickname":"Demo"}' | sed -E 's/^\{"id":([0-9]+).*/\1/')
+echo "userId=$U"
+echo "== 메인"; curl -s "$BASE/api/users/$U/main" | head -c 300; echo " ..."
+echo "== 뽑기"; post "/api/users/$U/gacha" ""
+echo "== 재뽑기 (막혀야 함)"; post "/api/users/$U/gacha" ""
+echo "== 지역 지도"; curl -s "$BASE/api/courses/1?userId=$U"; echo
 
-echo "== 2. 새 유저 + 첫 가챠"
-START=$(curl -s -X POST "$BASE/api/demo/start" -H "$JSON" -d '{"nickname":"Demo","language":"English","level":"BEGINNER"}')
-USER_ID=$(echo "$START" | sed -E 's/^\{"user":\{"id":([0-9]+).*/\1/')
-echo "userId=$USER_ID"
-echo "$START" | head -c 300; echo " ..."
+echo "== 전통시장"
+start 1; say 1 "이거 어디예요?"; ev 1 arrived
+start 2; say 2 "뭐가 맛있어요?"; say 2 "먹어봐도 돼요?"
+start 3; say 3 "이거 얼마예요?"; ev 3 selected; say 3 "이거 얼마예요?"; say 3 "조금 깎아 주세요."; say 3 "네, 주세요."
+start 4; say 4 "순대 주세요."; say 4 "순대만 주세요."; say 4 "포장해 주세요."
 
-STAGE=${STAGE:-5}
-echo "== 3. 스테이지 $STAGE 시작"
-curl -s -X POST "$BASE/api/stages/$STAGE/start" -H "$JSON" -d "{\"userId\":$USER_ID}"; echo
-
-for MSG in "안녕하세요" "이거 얼마" "꽈배기 두 개 주세요" "카드 돼요?"; do
-  echo "== 나: $MSG"
-  curl -s -X POST "$BASE/api/stages/$STAGE/chat" -H "$JSON" -d "{\"userId\":$USER_ID,\"message\":\"$MSG\"}"; echo
-done
-
-echo "== 4. 표현 카드"
-curl -s -X POST "$BASE/api/stages/$STAGE/phrase-card" -H "$JSON" -d "{\"userId\":$USER_ID}"; echo
-
-echo "== 5. 지도 (서대문구 진행도 확인)"
-curl -s "$BASE/api/users/$USER_ID/map" | grep -o '"code":"SEODAEMUN"[^}]*'; echo
-echo "== 완료"
+echo "== 지역 지도 (completed: true)"; curl -s "$BASE/api/courses/1?userId=$U" | head -c 300; echo
+echo "== 메인 (코인 4, 뽑기 가능)"; curl -s "$BASE/api/users/$U/main" | head -c 200; echo
+echo "== 두 번째 뽑기"; post "/api/users/$U/gacha" ""
