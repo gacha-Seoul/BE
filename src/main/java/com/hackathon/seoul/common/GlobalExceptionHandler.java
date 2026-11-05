@@ -19,6 +19,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(e.getStatus()).body(Map.of("message", e.getMessage()));
     }
 
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidBody(Exception e) {
+        return ResponseEntity.badRequest().body(Map.of("message", "올바른 JSON 요청 본문이 필요해요."));
+    }
+
+    @ExceptionHandler(org.springframework.dao.ConcurrencyFailureException.class)
+    public ResponseEntity<Map<String, String>> handleConflict(Exception e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "다른 요청을 처리 중이에요. 잠시 후 다시 시도해 주세요."));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleEtc(Exception e) {
         log.error("Unexpected error", e);

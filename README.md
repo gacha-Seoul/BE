@@ -1,83 +1,89 @@
 # 서울 가챠 BE
 
-가챠로 서울의 구를 뽑고, 구마다 5개 분야(역사·문화·예술·관광·생활자원) 스테이지에서 AI NPC와 한국어 상황 회화를 하며 미션을 깨는 외국인 대상 서비스의 백엔드.
+가챠로 서울의 구를 뽑고 AI NPC와 한국어 상황 회화를 하며 퀘스트를 깨는 서비스의 백엔드.
 
-- API 명세: [docs/API.md](docs/API.md)
-- DB 구조: [docs/ERD.md](docs/ERD.md)
-- Swagger (서버 실행 후): http://localhost:8080/swagger-ui.html
+Spring Boot 3.3 / Java 17 / Spring Data JPA / MySQL 8.4. Lombok과 H2는 사용하지 않는다.
+
+- [API 명세](docs/API.md)
+- [DB 구조와 무결성 규칙](docs/ERD.md)
+- 실행 후 Swagger: http://localhost:8080/swagger-ui.html
 
 ## 실행
 
-1. Java 17 이상
-2. IntelliJ: **File → Open** → 이 폴더 선택 → Gradle 로딩 기다리기
-3. `SeoulGachaApplication` 실행 → 콘솔에 `Started SeoulGachaApplication` 나오면 성공
-4. 확인: http://localhost:8080/api/health → `{"status":"UP","llmMode":"mock"}`
-5. 데모 흐름 한 번에 테스트: `./scripts/demo-check.sh`
+Java 17과 Docker Desktop이 필요하다. Docker Desktop을 먼저 실행한다.
+프로젝트는 Java 17 toolchain을 사용하므로 Java 21/26만 설치되어 있으면 실행할 수 없다.
+macOS에서 Java 17이 없다면 설치한다.
 
-### Gradle wrapper (gradlew)
-처음 한 번만: IntelliJ 오른쪽 **Gradle** 탭 → Tasks → build setup → **wrapper** 더블클릭.
-`gradlew`, `gradlew.bat`, `gradle/wrapper/`가 생기면 커밋해서 올린다. (팀원 모두 같은 Gradle 버전 사용)
+```bash
+brew install --cask temurin@17
+export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+```
 
-### AI 설정 (.env)
+`/usr/libexec/java_home -v 17`로 설치를 확인한다. IntelliJ의 Gradle JVM도 Java 17로 선택한다.
 
 ```bash
 cp .env.example .env
 ```
 
-- `LLM_MOCK=true` (기본): API 키 없이 가짜 응답. 한 마디 할 때마다 미션 1개 완료. 프론트 연동/리허설용
-- `LLM_MOCK=false` + `LLM_API_KEY=...`: 실제 AI
-- `.env`는 GitHub에 올라가지 않는다. **API 키는 절대 코드에 쓰지 말 것**
+`.env`에서 `DB_PASSWORD`와 `MYSQL_ROOT_PASSWORD`를 설정한다. `.env`는 Git에 포함되지 않는다.
+기존 `.env`가 있다면 덮어쓰지 말고 `.env.example`의 DB 항목을 추가한다.
 
-## 게임 규칙 (application.yml `game.*`)
-
-| 항목 | 값 |
-|---|---|
-| 시작 코인 | 3 |
-| 가챠 1회 | 3코인 |
-| 스테이지 클리어 | 스테이지별 `reward_coin` (기본 1) |
-| 지역 정복 (5개 스테이지 모두 클리어) | 보너스 +2 |
-| 첫 가챠 | 무조건 서대문구 (`first-region-code`, 비우면 완전 랜덤) |
-
-미션 완료 판정: AI는 "이번 말로 달성한 미션 번호"를 **제안**만 하고, 저장·클리어·코인 지급은 **서버가 결정**한다.
-AI 응답이 실패하거나 15초를 넘기면 "한 번 더 말해 줄래요?" 기본 응답으로 대체되어 화면이 멈추지 않는다.
-
-## 프로젝트 구조
-
-```
-BE/
-├── README.md
-├── .env.example           AI 키 설정 예시 (복사해서 .env로)
-├── CLAUDE.md, AGENTS.md   AI 코딩 도구용 프로젝트 규칙
-├── .editorconfig, .gitattributes, .gitignore
-├── build.gradle, settings.gradle
-├── docs/
-│   ├── API.md             API 명세 (프론트용)
-│   └── ERD.md             DB 구조
-├── scripts/
-│   └── demo-check.sh      데모 흐름 자동 테스트
-└── src/main/
-    ├── java/com/hackathon/seoul/
-    │   ├── controller/    User, Region, Stage, Demo(health/reset)
-    │   ├── service/       Chat(대화·판정), Gacha, Region, User, Demo
-    │   ├── domain/        Region, Stage, AppUser, UserRegion, StageProgress, ChatMessage
-    │   ├── repository/
-    │   ├── llm/           LlmClient, OpenAiLlmClient(실제), MockLlmClient, PromptFactory
-    │   ├── dto/           Dtos.java (요청·응답 record 모음)
-    │   ├── config/        CORS, Swagger
-    │   └── common/        GameException, 전역 에러 처리
-    └── resources/
-        ├── application.yml
-        ├── data.sql       서울 25개 구 + 스테이지 데이터
-        └── prompts/
-            ├── npc-chat.txt     NPC 대화 규칙
-            └── phrase-card.txt  표현 카드 생성 규칙
+```bash
+docker compose up -d --wait
+./gradlew bootRun
 ```
 
-## 자주 바꾸는 곳
+IntelliJ에서도 Gradle JVM과 Project SDK를 Java 17로 맞추고 `SeoulGachaApplication`을 실행할 수 있다.
+`GET http://localhost:8080/api/health`로 연결을 확인한다.
+로컬 MySQL이 이미 있으면 Docker 대신 `.env`의 `DB_URL / DB_USERNAME / DB_PASSWORD`를 설정한다.
+DB `seoul_gacha`와 계정을 미리 만들고, 계정에 해당 DB의 테이블 생성·변경·읽기·쓰기 권한을 부여해야 한다.
 
-| 하고 싶은 것 | 수정할 파일 |
+## 데이터 관리
+
+- JPA 엔티티가 테이블과 관계를 정의한다. 개발 환경에서는 `ddl-auto: update`로 스키마를 반영한다.
+- `data.sql`은 콘텐츠 초기 데이터 전용이다. 기존 ID를 건너뛰므로 재시작해도 중복 삽입하지 않는다.
+- 지역·장소·퀘스트 추가는 `data.sql`에 INSERT를 추가한다. 기존 ID의 콘텐츠를 수정하려면 해당 DB 행도 갱신해야 한다.
+- MySQL 데이터는 Docker의 `mysql_data` 볼륨에 저장된다. 앱 재시작과 `docker compose down` 후에도 유지된다.
+- 기존 H2 메모리 데이터는 이전하지 않는다. 새 MySQL DB에서 시작한다.
+- `POST /api/demo/reset`은 사용자 기록을 초기화하고 지역·장소·퀘스트 콘텐츠는 유지한다.
+
+현재 초기 데이터는 서울 25개 구, 장소 10개, 퀘스트 13개다.
+전통시장(장소 5)은 문화 분야이며 501~504 퀘스트를 순서대로 진행한다. 나머지 장소는 기존 미션을 단일 퀘스트로 유지한다.
+명세의 추가 장소는 콘텐츠가 확정되면 등록하면 된다. 진행률과 전체 개수는 데이터로 계산한다.
+
+## AI 설정
+
+- `LLM_MOCK=true`: 키 없는 연동용 고정 시나리오. 사용자 발화 의미와 무관하게 정해진 순서로 진행한다.
+- `LLM_MOCK=false`와 `.env`의 `LLM_API_KEY`: 실제 AI 대화.
+- NPC 규칙·표현 카드·기본 응답·mock 대사는 `src/main/resources/prompts/*.txt`에서 수정한다.
+- LLM은 의도·미션 달성·주문 정보 변경을 제안한다. 서버가 순서·허용 필드·완료 조건을 확인하고 코인을 지급한다.
+
+## 게임 규칙
+
+| 항목 | 기본값 |
 |---|---|
-| NPC 말투·대화 규칙 바꾸기 | `resources/prompts/npc-chat.txt` (재시작하면 반영) |
-| 지역/스테이지 추가·수정 | `resources/data.sql` 의 `stage` INSERT |
-| 코인, 가챠 비용 | `application.yml` 의 `game.*` |
-| API 추가 | controller + `docs/API.md` 같이 수정 |
+| 최초 무료 코인 | 1 |
+| 가챠 | 1코인 |
+| 퀘스트 최초 완료 | 퀘스트의 `reward_coin` (기본 1) |
+| 지역의 모든 퀘스트 완료 | 정복 보너스 +2 |
+| 첫 가챠 | 서대문구 |
+
+가입 시 코인 1개를 한 번 지급하고, 첫 뽑기를 포함해 가챠마다 1개를 사용한다. 별도의 무료 뽑기 횟수는 없다.
+
+가챠 요청은 `requestId`가 필수다. 같은 요청을 재시도할 때 같은 ID를 사용하면 다시 차감하지 않는다.
+진행·코인 변경은 사용자 행 잠금과 DB 유일 제약으로 보호하며, 완료·보상·잔액을 같은 트랜잭션에 저장한다.
+
+## 검증
+
+```bash
+./gradlew test
+```
+
+Testcontainers가 별도의 MySQL 8.4 컨테이너에서 JPA·시드·퀘스트 상태·보상·뽑기 재시도·동시 요청·초기화를 검증한다.
+Docker가 실행 중이어야 하며 기존 개발 DB는 사용하지 않는다.
+
+앱이 mock 모드로 실행 중이면 다음으로 실제 HTTP 흐름도 확인할 수 있다.
+
+```bash
+./scripts/demo-check.sh
+```

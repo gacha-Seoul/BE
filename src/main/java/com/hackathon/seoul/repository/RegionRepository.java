@@ -11,6 +11,6 @@ public interface RegionRepository extends JpaRepository<Region, Long> {
     Optional<Region> findByCode(String code);
 
     /** 스테이지 데이터가 있는 지역만 (가챠 후보) */
-    @Query("select distinct s.region from Stage s")
+    @Query("select distinct q.stage.region from Quest q")
     List<Region> findPlayableRegions();
 }

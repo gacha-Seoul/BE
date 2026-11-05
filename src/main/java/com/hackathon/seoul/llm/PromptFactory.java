@@ -1,7 +1,7 @@
 package com.hackathon.seoul.llm;
 
 import com.hackathon.seoul.domain.AppUser;
-import com.hackathon.seoul.domain.Stage;
+import com.hackathon.seoul.domain.Quest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +11,6 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 프롬프트는 resources/prompts/*.txt 에 있음 (Java 몰라도 수정 가능).
@@ -23,26 +22,29 @@ public class PromptFactory {
     private final String chatTemplate = load("prompts/npc-chat.txt");
     private final String phraseCardTemplate = load("prompts/phrase-card.txt");
 
-    public String chatSystemPrompt(AppUser user, Stage stage, Set<Integer> completed) {
-        List<String> missions = stage.getMissionList();
+    public String fallbackReply() { return load("prompts/fallback.txt").trim(); }
+
+    public String chatSystemPrompt(AppUser user, Quest stage, Map<String, Object> context) {
         StringBuilder missionText = new StringBuilder();
-        for (int i = 0; i < missions.size(); i++) {
-            missionText.append(i).append(": ").append(missions.get(i))
-                    .append(completed.contains(i) ? " (완료)" : " (미완료)").append("\n");
-        }
-        return fill(chatTemplate, Map.of(
-                "region", stage.getRegion().getName(),
-                "place", nz(stage.getPlace()),
-                "category", stage.getCategory().getLabel(),
-                "npcRole", nz(stage.getNpcRole()),
-                "persona", nz(stage.getNpcPersona()),
-                "situation", nz(stage.getSituation()),
-                "language", language(user),
-                "level", user.getLevel() == null ? "BEGINNER" : user.getLevel(),
-                "missions", missionText.toString().trim()));
+        List<String> missions = stage.getMissionList();
+        for (int i = 0; i < missions.size(); i++) missionText.append(i).append(": ").append(missions.get(i)).append("\n");
+        Map<String, String> values = new java.util.HashMap<>();
+        values.put("region", stage.getRegion().getName());
+        values.put("place", nz(stage.getPlace()));
+        values.put("category", stage.getCategory().getLabel());
+        values.put("npcRole", nz(stage.getNpcRole()));
+        values.put("persona", nz(stage.getNpcPersona()));
+        values.put("situation", nz(stage.getSituation()));
+        values.put("language", language(user));
+        values.put("level", user.getLevel() == null ? "BEGINNER" : user.getLevel());
+        values.put("missions", missionText.toString());
+        values.put("completionRule", stage.getCompletionRule().name());
+        try { values.put("context", new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(context)); }
+        catch (com.fasterxml.jackson.core.JsonProcessingException e) { throw new IllegalStateException(e); }
+        return fill(chatTemplate, values);
     }
 
-    public String phraseCardSystemPrompt(AppUser user, Stage stage) {
+    public String phraseCardSystemPrompt(AppUser user, Quest stage) {
         return fill(phraseCardTemplate, Map.of(
                 "region", stage.getRegion().getName(),
                 "place", nz(stage.getPlace()),

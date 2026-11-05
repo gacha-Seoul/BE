@@ -1,108 +1,55 @@
--- =========================================================
--- 서울 25개 구 (3D 지도에 전부 표시, 스테이지 있는 구만 가챠 후보)
--- name은 GeoJSON의 구 이름과 같게 맞추면 3D 지도 매칭이 쉬워요.
--- =========================================================
-INSERT INTO region (id, code, name, name_en, description) VALUES
-(1,  'JONGNO',       '종로구',   'Jongno-gu',       '경복궁과 광화문, 인사동, 광장시장이 있는 서울 역사 문화의 중심.'),
-(2,  'JUNG',         '중구',     'Jung-gu',         NULL),
-(3,  'YONGSAN',      '용산구',   'Yongsan-gu',      NULL),
-(4,  'SEONGDONG',    '성동구',   'Seongdong-gu',    NULL),
-(5,  'GWANGJIN',     '광진구',   'Gwangjin-gu',     NULL),
-(6,  'DONGDAEMUN',   '동대문구', 'Dongdaemun-gu',   NULL),
-(7,  'JUNGNANG',     '중랑구',   'Jungnang-gu',     NULL),
-(8,  'SEONGBUK',     '성북구',   'Seongbuk-gu',     NULL),
-(9,  'GANGBUK',      '강북구',   'Gangbuk-gu',      NULL),
-(10, 'DOBONG',       '도봉구',   'Dobong-gu',       NULL),
-(11, 'NOWON',        '노원구',   'Nowon-gu',        NULL),
-(12, 'EUNPYEONG',    '은평구',   'Eunpyeong-gu',    NULL),
-(13, 'SEODAEMUN',    '서대문구', 'Seodaemun-gu',    '독립문과 서대문형무소역사관, 신촌·이대 거리, 연희동, 홍제천, 전통시장이 함께 있는 동네.'),
-(14, 'MAPO',         '마포구',   'Mapo-gu',         NULL),
-(15, 'YANGCHEON',    '양천구',   'Yangcheon-gu',    NULL),
-(16, 'GANGSEO',      '강서구',   'Gangseo-gu',      NULL),
-(17, 'GURO',         '구로구',   'Guro-gu',         NULL),
-(18, 'GEUMCHEON',    '금천구',   'Geumcheon-gu',    NULL),
-(19, 'YEONGDEUNGPO', '영등포구', 'Yeongdeungpo-gu', NULL),
-(20, 'DONGJAK',      '동작구',   'Dongjak-gu',      NULL),
-(21, 'GWANAK',       '관악구',   'Gwanak-gu',       NULL),
-(22, 'SEOCHO',       '서초구',   'Seocho-gu',       NULL),
-(23, 'GANGNAM',      '강남구',   'Gangnam-gu',      NULL),
-(24, 'SONGPA',       '송파구',   'Songpa-gu',       NULL),
-(25, 'GANGDONG',     '강동구',   'Gangdong-gu',     NULL);
+-- JPA가 테이블 생성 후 실행. 기존 ID는 유지하여 MySQL 재시작 시 중복 삽입하지 않는다.
+-- 새 콘텐츠는 각 테이블에 INSERT를 추가한다. 기존 ID의 값을 덮어쓰지 않는다.
 
--- =========================================================
--- 스테이지: 지역마다 5개 분야 (역사/문화/예술/관광/생활자원)
--- missions, starter_suggestions 는 '|' 로 구분
--- 새 지역 추가 = 여기에 INSERT만 하면 끝
--- =========================================================
-INSERT INTO stage (id, region_id, category, order_no, place, npc_role, npc_persona, situation, missions, opening_line, starter_suggestions, reward_coin) VALUES
--- ---------- 서대문구 ----------
-(1, 13, 'HISTORY', 1, '서대문형무소역사관 · 독립문', '매표소 안내 직원',
- '차분하고 정중한 존댓말(하십시오체/해요체). 역사적 장소라 장난스럽지 않게, 친절하게 안내한다.',
- '외국인 관광객이 서대문형무소역사관 매표소에서 관람권을 사고 관람 순서를 물어본다.',
- '인사하기|관람권 사기 (인원 말하기)|관람 시간이나 순서 물어보기|감사 인사하기',
- '안녕하세요, 서대문형무소역사관입니다. 무엇을 도와드릴까요?',
- '안녕하세요|표 한 장 주세요|얼마예요?', 1),
+INSERT INTO region (id, code, name, name_en, description) SELECT 1, 'JONGNO', '종로구', 'Jongno-gu', '경복궁과 광화문, 인사동, 광장시장이 있는 서울 역사 문화의 중심.' WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 1);
+INSERT INTO region (id, code, name, name_en, description) SELECT 2, 'JUNG', '중구', 'Jung-gu', NULL WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 2);
+INSERT INTO region (id, code, name, name_en, description) SELECT 3, 'YONGSAN', '용산구', 'Yongsan-gu', NULL WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 3);
+INSERT INTO region (id, code, name, name_en, description) SELECT 4, 'SEONGDONG', '성동구', 'Seongdong-gu', NULL WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 4);
+INSERT INTO region (id, code, name, name_en, description) SELECT 5, 'GWANGJIN', '광진구', 'Gwangjin-gu', NULL WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 5);
+INSERT INTO region (id, code, name, name_en, description) SELECT 6, 'DONGDAEMUN', '동대문구', 'Dongdaemun-gu', NULL WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 6);
+INSERT INTO region (id, code, name, name_en, description) SELECT 7, 'JUNGNANG', '중랑구', 'Jungnang-gu', NULL WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 7);
+INSERT INTO region (id, code, name, name_en, description) SELECT 8, 'SEONGBUK', '성북구', 'Seongbuk-gu', NULL WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 8);
+INSERT INTO region (id, code, name, name_en, description) SELECT 9, 'GANGBUK', '강북구', 'Gangbuk-gu', NULL WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 9);
+INSERT INTO region (id, code, name, name_en, description) SELECT 10, 'DOBONG', '도봉구', 'Dobong-gu', NULL WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 10);
+INSERT INTO region (id, code, name, name_en, description) SELECT 11, 'NOWON', '노원구', 'Nowon-gu', NULL WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 11);
+INSERT INTO region (id, code, name, name_en, description) SELECT 12, 'EUNPYEONG', '은평구', 'Eunpyeong-gu', NULL WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 12);
+INSERT INTO region (id, code, name, name_en, description) SELECT 13, 'SEODAEMUN', '서대문구', 'Seodaemun-gu', '독립문과 서대문형무소역사관, 신촌·이대 거리, 연희동, 홍제천, 전통시장이 함께 있는 동네.' WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 13);
+INSERT INTO region (id, code, name, name_en, description) SELECT 14, 'MAPO', '마포구', 'Mapo-gu', NULL WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 14);
+INSERT INTO region (id, code, name, name_en, description) SELECT 15, 'YANGCHEON', '양천구', 'Yangcheon-gu', NULL WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 15);
+INSERT INTO region (id, code, name, name_en, description) SELECT 16, 'GANGSEO', '강서구', 'Gangseo-gu', NULL WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 16);
+INSERT INTO region (id, code, name, name_en, description) SELECT 17, 'GURO', '구로구', 'Guro-gu', NULL WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 17);
+INSERT INTO region (id, code, name, name_en, description) SELECT 18, 'GEUMCHEON', '금천구', 'Geumcheon-gu', NULL WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 18);
+INSERT INTO region (id, code, name, name_en, description) SELECT 19, 'YEONGDEUNGPO', '영등포구', 'Yeongdeungpo-gu', NULL WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 19);
+INSERT INTO region (id, code, name, name_en, description) SELECT 20, 'DONGJAK', '동작구', 'Dongjak-gu', NULL WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 20);
+INSERT INTO region (id, code, name, name_en, description) SELECT 21, 'GWANAK', '관악구', 'Gwanak-gu', NULL WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 21);
+INSERT INTO region (id, code, name, name_en, description) SELECT 22, 'SEOCHO', '서초구', 'Seocho-gu', NULL WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 22);
+INSERT INTO region (id, code, name, name_en, description) SELECT 23, 'GANGNAM', '강남구', 'Gangnam-gu', NULL WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 23);
+INSERT INTO region (id, code, name, name_en, description) SELECT 24, 'SONGPA', '송파구', 'Songpa-gu', NULL WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 24);
+INSERT INTO region (id, code, name, name_en, description) SELECT 25, 'GANGDONG', '강동구', 'Gangdong-gu', NULL WHERE NOT EXISTS (SELECT 1 FROM region WHERE id = 25);
 
-(2, 13, 'CULTURE', 2, '신촌 · 이대 거리 카페', '카페 아르바이트생',
- '밝고 빠른 20대 말투, 해요체. 손님이 머뭇거리면 천천히 다시 말해 준다.',
- '대학가 카페에서 음료를 주문한다. 직원이 온도, 사이즈, 매장/포장, 결제를 차례로 묻는다.',
- '음료 주문하기|아이스/따뜻한 것 말하기|매장 또는 포장 말하기|결제 방법 말하기',
- '어서 오세요! 주문 도와드릴까요?',
- '아메리카노 주세요|메뉴 추천해 주세요|라떼 하나 주세요', 1),
+-- 장소: 동일 지역·분야에 여러 장소를 등록할 수 있다.
+INSERT INTO stage (id, region_id, category, order_no, place, intro_story, image_url) SELECT 1, 13, 'HISTORY', 1, '서대문형무소역사관 · 독립문', '외국인 관광객이 서대문형무소역사관 매표소에서 관람권을 사고 관람 순서를 물어본다.', NULL WHERE NOT EXISTS (SELECT 1 FROM stage WHERE id = 1);
+INSERT INTO stage (id, region_id, category, order_no, place, intro_story, image_url) SELECT 2, 13, 'CULTURE', 2, '신촌 · 이대 거리 카페', '대학가 카페에서 음료를 주문한다. 직원이 온도, 사이즈, 매장/포장, 결제를 차례로 묻는다.', NULL WHERE NOT EXISTS (SELECT 1 FROM stage WHERE id = 2);
+INSERT INTO stage (id, region_id, category, order_no, place, intro_story, image_url) SELECT 3, 13, 'ART', 3, '연희동 공방', '연희동의 작은 도자기 공방에서 원데이 클래스를 예약한다.', NULL WHERE NOT EXISTS (SELECT 1 FROM stage WHERE id = 3);
+INSERT INTO stage (id, region_id, category, order_no, place, intro_story, image_url) SELECT 4, 13, 'TOURISM', 4, '홍제천 인공폭포', '홍제천 인공폭포 앞에서 지나가는 주민에게 사진을 부탁하고 근처 산책 코스를 묻는다.', NULL WHERE NOT EXISTS (SELECT 1 FROM stage WHERE id = 4);
+INSERT INTO stage (id, region_id, category, order_no, place, intro_story, image_url) SELECT 5, 13, 'CULTURE', 5, '영천시장 · 전통시장 퀘스트', '친구랑 먹을 간식을 사러 왔어요. 사진 속 전집을 찾아 전을 맛보고, 두 팩을 9천 원에 살 수 있는지 물어봐요. 돌아오는 길엔 간을 뺀 순대 한 팩도 포장해요. 친구는 시장 입구에서 기다리고 있어요.', NULL WHERE NOT EXISTS (SELECT 1 FROM stage WHERE id = 5);
+INSERT INTO stage (id, region_id, category, order_no, place, intro_story, image_url) SELECT 6, 1, 'HISTORY', 1, '경복궁 · 광화문', '경복궁 매표소에서 입장권을 사고 수문장 교대식 등 관람 정보를 묻는다.', NULL WHERE NOT EXISTS (SELECT 1 FROM stage WHERE id = 6);
+INSERT INTO stage (id, region_id, category, order_no, place, intro_story, image_url) SELECT 7, 1, 'CULTURE', 2, '익선동 한옥 골목', '익선동 한옥 카페에서 자리를 안내받고 전통 디저트를 주문한다.', NULL WHERE NOT EXISTS (SELECT 1 FROM stage WHERE id = 7);
+INSERT INTO stage (id, region_id, category, order_no, place, intro_story, image_url) SELECT 8, 1, 'ART', 3, '인사동 공예품 가게', '인사동 공예품 가게에서 선물할 기념품을 고르고 포장을 부탁한다.', NULL WHERE NOT EXISTS (SELECT 1 FROM stage WHERE id = 8);
+INSERT INTO stage (id, region_id, category, order_no, place, intro_story, image_url) SELECT 9, 1, 'TOURISM', 4, '광화문 한복 대여점', '광화문 근처 한복 대여점에서 한복을 고르고 대여 시간과 가격을 정한다.', NULL WHERE NOT EXISTS (SELECT 1 FROM stage WHERE id = 9);
+INSERT INTO stage (id, region_id, category, order_no, place, intro_story, image_url) SELECT 10, 1, 'LIVING', 5, '광장시장 빈대떡 가게', '광장시장 빈대떡 가게에서 메뉴를 고르고 자리에 앉아 주문한다.', NULL WHERE NOT EXISTS (SELECT 1 FROM stage WHERE id = 10);
 
-(3, 13, 'ART', 3, '연희동 공방', '도자기 공방 사장님',
- '느긋하고 다정한 말투, 해요체. 작품 이야기를 좋아한다.',
- '연희동의 작은 도자기 공방에서 원데이 클래스를 예약한다.',
- '원데이 클래스 문의하기|날짜와 시간 정하기|인원 말하기|가격이나 준비물 물어보기',
- '안녕하세요~ 구경하러 오셨어요? 아니면 클래스 들으러 오셨어요?',
- '클래스 듣고 싶어요|언제 할 수 있어요?|얼마예요?', 1),
-
-(4, 13, 'TOURISM', 4, '홍제천 인공폭포', '산책 나온 동네 주민',
- '친근한 동네 어르신 말투, 해요체. 동네 자랑을 좋아한다.',
- '홍제천 인공폭포 앞에서 지나가는 주민에게 사진을 부탁하고 근처 산책 코스를 묻는다.',
- '말 걸기 (실례합니다)|사진 찍어 달라고 부탁하기|근처 추천 장소 물어보기|감사 인사하기',
- '(산책 중인 주민이 폭포를 보며 서 있다) 오늘 폭포 물줄기 참 좋네~',
- '실례합니다|사진 좀 찍어 주세요|여기 정말 예뻐요', 1),
-
-(5, 13, 'LIVING', 5, '영천시장 꽈배기 가게', '꽈배기 가게 사장님',
- '정 많고 시원시원한 시장 상인 말투, 반말 섞인 해요체. 덤 주는 걸 좋아하고 가벼운 흥정도 받아 준다.',
- '전통시장 꽈배기 가게에서 가격을 묻고 꽈배기를 사서 계산한다.',
- '인사하기|가격 물어보기|개수 정해서 주문하기|결제하기 (카드 또는 현금)',
- '어서 와요~ 꽈배기 방금 나왔어! 따끈따끈해요.',
- '안녕하세요|이거 얼마예요?|꽈배기 주세요', 1),
-
--- ---------- 종로구 ----------
-(6, 1, 'HISTORY', 1, '경복궁 · 광화문', '경복궁 매표소 직원',
- '정중한 존댓말. 외국인 방문객에게 익숙하고 친절하다.',
- '경복궁 매표소에서 입장권을 사고 수문장 교대식 등 관람 정보를 묻는다.',
- '인사하기|입장권 사기|관람 정보 물어보기|감사 인사하기',
- '안녕하세요, 경복궁입니다. 몇 분이세요?',
- '한 명이에요|표 주세요|한복 입으면 무료예요?', 1),
-
-(7, 1, 'CULTURE', 2, '익선동 한옥 골목', '한옥 카페 직원',
- '친절하고 차분한 해요체.',
- '익선동 한옥 카페에서 자리를 안내받고 전통 디저트를 주문한다.',
- '자리 요청하기|메뉴 추천 받기|주문하기|계산하기',
- '어서 오세요! 몇 분이세요?',
- '한 명이에요|추천 메뉴가 뭐예요?|이거 주세요', 1),
-
-(8, 1, 'ART', 3, '인사동 공예품 가게', '전통 공예품 가게 사장님',
- '자부심 있는 장인 말투, 해요체. 물건 설명을 자세히 해 준다.',
- '인사동 공예품 가게에서 선물할 기념품을 고르고 포장을 부탁한다.',
- '물건 구경하며 말 걸기|가격 물어보기|선물 포장 부탁하기|결제하기',
- '어서 오세요~ 천천히 구경하세요. 다 손으로 만든 거예요.',
- '이거 뭐예요?|얼마예요?|선물 포장 돼요?', 1),
-
-(9, 1, 'TOURISM', 4, '광화문 한복 대여점', '한복 대여점 직원',
- '밝고 친절한 해요체. 한복 고르는 걸 적극적으로 도와준다.',
- '광화문 근처 한복 대여점에서 한복을 고르고 대여 시간과 가격을 정한다.',
- '인사하기|원하는 한복 색이나 스타일 말하기|대여 시간 정하기|가격 물어보고 결제하기',
- '안녕하세요! 한복 대여하러 오셨어요? 원하는 색 있으세요?',
- '빨간색 한복 있어요?|두 시간 빌리고 싶어요|얼마예요?', 1),
-
-(10, 1, 'LIVING', 5, '광장시장 빈대떡 가게', '빈대떡 가게 사장님',
- '활기차고 목소리 큰 시장 상인 말투, 반말 섞인 해요체.',
- '광장시장 빈대떡 가게에서 메뉴를 고르고 자리에 앉아 주문한다.',
- '인사하기|메뉴 물어보기|주문하기|계산하기',
- '어서 와요! 빈대떡 하나 부쳐 줄까?',
- '안녕하세요|빈대떡 하나 주세요|이거 매워요?', 1);
+-- 기존 장소는 단일 퀘스트로 보존. 전통시장은 명세의 순차 퀘스트 4개.
+INSERT INTO quest (id, stage_id, code, order_no, title, npc_role, npc_persona, situation, missions, opening_line, starter_suggestions, reward_coin, completion_rule) SELECT 1, 1, 'Q01', 1, '서대문형무소역사관 · 독립문 체험', '매표소 안내 직원', '차분하고 정중한 존댓말(하십시오체/해요체). 역사적 장소라 장난스럽지 않게, 친절하게 안내한다.', '외국인 관광객이 서대문형무소역사관 매표소에서 관람권을 사고 관람 순서를 물어본다.', '인사하기|관람권 사기 (인원 말하기)|관람 시간이나 순서 물어보기|감사 인사하기', '안녕하세요, 서대문형무소역사관입니다. 무엇을 도와드릴까요?', '안녕하세요|표 한 장 주세요|얼마예요?', 1, 'ALL_MISSIONS' WHERE NOT EXISTS (SELECT 1 FROM quest WHERE id = 1);
+INSERT INTO quest (id, stage_id, code, order_no, title, npc_role, npc_persona, situation, missions, opening_line, starter_suggestions, reward_coin, completion_rule) SELECT 2, 2, 'Q01', 1, '신촌 · 이대 거리 카페 체험', '카페 아르바이트생', '밝고 빠른 20대 말투, 해요체. 손님이 머뭇거리면 천천히 다시 말해 준다.', '대학가 카페에서 음료를 주문한다. 직원이 온도, 사이즈, 매장/포장, 결제를 차례로 묻는다.', '음료 주문하기|아이스/따뜻한 것 말하기|매장 또는 포장 말하기|결제 방법 말하기', '어서 오세요! 주문 도와드릴까요?', '아메리카노 주세요|메뉴 추천해 주세요|라떼 하나 주세요', 1, 'ALL_MISSIONS' WHERE NOT EXISTS (SELECT 1 FROM quest WHERE id = 2);
+INSERT INTO quest (id, stage_id, code, order_no, title, npc_role, npc_persona, situation, missions, opening_line, starter_suggestions, reward_coin, completion_rule) SELECT 3, 3, 'Q01', 1, '연희동 공방 체험', '도자기 공방 사장님', '느긋하고 다정한 말투, 해요체. 작품 이야기를 좋아한다.', '연희동의 작은 도자기 공방에서 원데이 클래스를 예약한다.', '원데이 클래스 문의하기|날짜와 시간 정하기|인원 말하기|가격이나 준비물 물어보기', '안녕하세요~ 구경하러 오셨어요? 아니면 클래스 들으러 오셨어요?', '클래스 듣고 싶어요|언제 할 수 있어요?|얼마예요?', 1, 'ALL_MISSIONS' WHERE NOT EXISTS (SELECT 1 FROM quest WHERE id = 3);
+INSERT INTO quest (id, stage_id, code, order_no, title, npc_role, npc_persona, situation, missions, opening_line, starter_suggestions, reward_coin, completion_rule) SELECT 4, 4, 'Q01', 1, '홍제천 인공폭포 체험', '산책 나온 동네 주민', '친근한 동네 어르신 말투, 해요체. 동네 자랑을 좋아한다.', '홍제천 인공폭포 앞에서 지나가는 주민에게 사진을 부탁하고 근처 산책 코스를 묻는다.', '말 걸기 (실례합니다)|사진 찍어 달라고 부탁하기|근처 추천 장소 물어보기|감사 인사하기', '(산책 중인 주민이 폭포를 보며 서 있다) 오늘 폭포 물줄기 참 좋네~', '실례합니다|사진 좀 찍어 주세요|여기 정말 예뻐요', 1, 'ALL_MISSIONS' WHERE NOT EXISTS (SELECT 1 FROM quest WHERE id = 4);
+INSERT INTO quest (id, stage_id, code, order_no, title, npc_role, npc_persona, situation, missions, opening_line, starter_suggestions, reward_coin, completion_rule) SELECT 6, 6, 'Q01', 1, '경복궁 · 광화문 체험', '경복궁 매표소 직원', '정중한 존댓말. 외국인 방문객에게 익숙하고 친절하다.', '경복궁 매표소에서 입장권을 사고 수문장 교대식 등 관람 정보를 묻는다.', '인사하기|입장권 사기|관람 정보 물어보기|감사 인사하기', '안녕하세요, 경복궁입니다. 몇 분이세요?', '한 명이에요|표 주세요|한복 입으면 무료예요?', 1, 'ALL_MISSIONS' WHERE NOT EXISTS (SELECT 1 FROM quest WHERE id = 6);
+INSERT INTO quest (id, stage_id, code, order_no, title, npc_role, npc_persona, situation, missions, opening_line, starter_suggestions, reward_coin, completion_rule) SELECT 7, 7, 'Q01', 1, '익선동 한옥 골목 체험', '한옥 카페 직원', '친절하고 차분한 해요체.', '익선동 한옥 카페에서 자리를 안내받고 전통 디저트를 주문한다.', '자리 요청하기|메뉴 추천 받기|주문하기|계산하기', '어서 오세요! 몇 분이세요?', '한 명이에요|추천 메뉴가 뭐예요?|이거 주세요', 1, 'ALL_MISSIONS' WHERE NOT EXISTS (SELECT 1 FROM quest WHERE id = 7);
+INSERT INTO quest (id, stage_id, code, order_no, title, npc_role, npc_persona, situation, missions, opening_line, starter_suggestions, reward_coin, completion_rule) SELECT 8, 8, 'Q01', 1, '인사동 공예품 가게 체험', '전통 공예품 가게 사장님', '자부심 있는 장인 말투, 해요체. 물건 설명을 자세히 해 준다.', '인사동 공예품 가게에서 선물할 기념품을 고르고 포장을 부탁한다.', '물건 구경하며 말 걸기|가격 물어보기|선물 포장 부탁하기|결제하기', '어서 오세요~ 천천히 구경하세요. 다 손으로 만든 거예요.', '이거 뭐예요?|얼마예요?|선물 포장 돼요?', 1, 'ALL_MISSIONS' WHERE NOT EXISTS (SELECT 1 FROM quest WHERE id = 8);
+INSERT INTO quest (id, stage_id, code, order_no, title, npc_role, npc_persona, situation, missions, opening_line, starter_suggestions, reward_coin, completion_rule) SELECT 9, 9, 'Q01', 1, '광화문 한복 대여점 체험', '한복 대여점 직원', '밝고 친절한 해요체. 한복 고르는 걸 적극적으로 도와준다.', '광화문 근처 한복 대여점에서 한복을 고르고 대여 시간과 가격을 정한다.', '인사하기|원하는 한복 색이나 스타일 말하기|대여 시간 정하기|가격 물어보고 결제하기', '안녕하세요! 한복 대여하러 오셨어요? 원하는 색 있으세요?', '빨간색 한복 있어요?|두 시간 빌리고 싶어요|얼마예요?', 1, 'ALL_MISSIONS' WHERE NOT EXISTS (SELECT 1 FROM quest WHERE id = 9);
+INSERT INTO quest (id, stage_id, code, order_no, title, npc_role, npc_persona, situation, missions, opening_line, starter_suggestions, reward_coin, completion_rule) SELECT 10, 10, 'Q01', 1, '광장시장 빈대떡 가게 체험', '빈대떡 가게 사장님', '활기차고 목소리 큰 시장 상인 말투, 반말 섞인 해요체.', '광장시장 빈대떡 가게에서 메뉴를 고르고 자리에 앉아 주문한다.', '인사하기|메뉴 물어보기|주문하기|계산하기', '어서 와요! 빈대떡 하나 부쳐 줄까?', '안녕하세요|빈대떡 하나 주세요|이거 매워요?', 1, 'ALL_MISSIONS' WHERE NOT EXISTS (SELECT 1 FROM quest WHERE id = 10);
+INSERT INTO quest (id, stage_id, code, order_no, title, npc_role, npc_persona, situation, missions, opening_line, starter_suggestions, reward_coin, completion_rule) SELECT 501, 5, 'Q01', 1, '사진 속 전집 찾기', '시장 입구 채소 좌판 상인', '친절한 시장 상인, 쉬운 해요체.', '시장 입구에서 사진 속 전집 위치를 묻는다. 빨간 천막을 지나 방앗간 옆 전집으로 안내하고 사용자가 도착했음을 확인한다.', '전집 위치 묻기|전집 도착하기', '뭐 찾으세요?', '전집이 어디예요?|사진 속 가게를 찾고 있어요', 1, 'FIND_STORE' WHERE NOT EXISTS (SELECT 1 FROM quest WHERE id = 501);
+INSERT INTO quest (id, stage_id, code, order_no, title, npc_role, npc_persona, situation, missions, opening_line, starter_suggestions, reward_coin, completion_rule) SELECT 502, 5, 'Q02', 2, '갓 부친 전, 한 입 먼저', '전집 상인', '정 많고 친절한 해요체.', '전집 진열대에서 호박전을 추천하고 한 조각 시식을 권한다. 다른 전을 요청하면 오늘은 호박전만 시식 가능하다고 안내한다.', '호박전 시식 수락하기', '호박전이에요. 방금 부쳤어요. 여기 잘라 놓은 거 드셔 보세요.', '먹어봐도 돼요?|네, 먹어볼게요', 1, 'ACCEPT_SAMPLE' WHERE NOT EXISTS (SELECT 1 FROM quest WHERE id = 502);
+INSERT INTO quest (id, stage_id, code, order_no, title, npc_role, npc_persona, situation, missions, opening_line, starter_suggestions, reward_coin, completion_rule) SELECT 503, 5, 'Q03', 3, '만 원인데, 가진 돈은 구천 원', '전집 상인', '가벼운 흥정을 받아 주는 시장 상인.', '호박전 두 팩은 10,000원이다. 학습자 예산은 9,000원. 흥정하면 9,000원을 제안하고 구매 확정을 기다린다. 9,000원 미만 제안은 9,000원으로 다시 제안한다. 구매 후 하나씩 따로 포장하고 순대는 입구 쪽 분식집으로 안내한다.', '호박전 두 팩 선택하기|가격 흥정하기|9,000원 구매 확정하기', '두 팩에 만 원이에요.', '조금 깎아 주세요|구천 원에 될까요?', 1, 'CONFIRM_NEGOTIATION' WHERE NOT EXISTS (SELECT 1 FROM quest WHERE id = 503);
+INSERT INTO quest (id, stage_id, code, order_no, title, npc_role, npc_persona, situation, missions, opening_line, starter_suggestions, reward_coin, completion_rule) SELECT 504, 5, 'Q04', 4, '친구가 부탁한 순대', '시장 입구 분식집 상인', '주문 내용을 차근차근 확인하는 해요체.', '순대 한 팩, 간 제외, 포장을 모두 확인한다. 완료 후 시장 입구의 친구에게 간식을 건넨다. 조건이 빠지면 해당 정보만 다시 묻는다.', '순대 한 팩 주문하기|간 빼 달라고 하기|포장 주문 확정하기', '간도 넣어드려요?', '순대 한 팩 주세요|간은 빼 주세요|포장해 주세요', 1, 'CONFIRM_ORDER' WHERE NOT EXISTS (SELECT 1 FROM quest WHERE id = 504);

@@ -1,30 +1,26 @@
 #!/usr/bin/env bash
-# 데모 흐름 한 번에 확인: 서버 켠 상태에서 ./scripts/demo-check.sh
-set -e
+# mock 모드 서버를 실행한 뒤 사용. 실패 응답이나 예상과 다른 진행 상태는 오류로 처리한다.
+set -euo pipefail
 BASE=${BASE:-http://localhost:8080}
-JSON='Content-Type: application/json'
-
-echo "== 1. 서버 상태"
-curl -s "$BASE/api/health"; echo
-
-echo "== 2. 새 유저 + 첫 가챠"
-START=$(curl -s -X POST "$BASE/api/demo/start" -H "$JSON" -d '{"nickname":"Demo","language":"English","level":"BEGINNER"}')
-USER_ID=$(echo "$START" | sed -E 's/^\{"user":\{"id":([0-9]+).*/\1/')
+HEADER='Content-Type: application/json'
+START=$(curl --fail --silent --show-error -X POST "$BASE/api/demo/start" -H "$HEADER" -d '{"nickname":"Demo","language":"English","level":"BEGINNER"}')
+USER_ID=$(python3 -c 'import json,sys; print(json.load(sys.stdin)["user"]["id"])' <<< "$START")
 echo "userId=$USER_ID"
-echo "$START" | head -c 300; echo " ..."
-
-STAGE=${STAGE:-5}
-echo "== 3. 스테이지 $STAGE 시작"
-curl -s -X POST "$BASE/api/stages/$STAGE/start" -H "$JSON" -d "{\"userId\":$USER_ID}"; echo
-
-for MSG in "안녕하세요" "이거 얼마" "꽈배기 두 개 주세요" "카드 돼요?"; do
-  echo "== 나: $MSG"
-  curl -s -X POST "$BASE/api/stages/$STAGE/chat" -H "$JSON" -d "{\"userId\":$USER_ID,\"message\":\"$MSG\"}"; echo
+for QUEST in 501 502 503 504; do
+  curl --fail --silent --show-error -X POST "$BASE/api/quests/$QUEST/start" -H "$HEADER" -d "{\"userId\":$USER_ID}" > /dev/null
+  case "$QUEST" in
+    501) MESSAGES=("전집이 어디예요?" "전집에 도착했어요") ;;
+    502) MESSAGES=("네, 먹어볼게요") ;;
+    503) MESSAGES=("호박전 두 팩 주세요" "조금 깎아 주세요" "네, 주세요") ;;
+    504) MESSAGES=("순대 한 팩 주세요" "간은 빼 주세요" "포장해 주세요") ;;
+  esac
+  for MESSAGE in "${MESSAGES[@]}"; do
+    RESPONSE=$(curl --fail --silent --show-error -X POST "$BASE/api/quests/$QUEST/chat" -H "$HEADER" -d "{\"userId\":$USER_ID,\"message\":\"$MESSAGE\"}")
+    echo "$RESPONSE"
+  done
+  python3 -c 'import json,sys; r=json.load(sys.stdin); assert r["questCompleted"], r' <<< "$RESPONSE"
 done
-
-echo "== 4. 표현 카드"
-curl -s -X POST "$BASE/api/stages/$STAGE/phrase-card" -H "$JSON" -d "{\"userId\":$USER_ID}"; echo
-
-echo "== 5. 지도 (서대문구 진행도 확인)"
-curl -s "$BASE/api/users/$USER_ID/map" | grep -o '"code":"SEODAEMUN"[^}]*'; echo
-echo "== 완료"
+curl --fail --silent --show-error -X POST "$BASE/api/quests/504/phrase-card" -H "$HEADER" -d "{\"userId\":$USER_ID}"
+echo
+curl --fail --silent --show-error "$BASE/api/users/$USER_ID/map"
+echo

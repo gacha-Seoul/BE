@@ -9,16 +9,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class DemoService {
 
+    private final CoinTransactionRepository coins;
+    private final GachaHistoryRepository history;
     private final ChatMessageRepository messageRepo;
-    private final StageProgressRepository progressRepo;
+    private final QuestProgressRepository progressRepo;
     private final UserRegionRepository userRegionRepo;
     private final AppUserRepository userRepo;
     private final UserService userService;
     private final GachaService gachaService;
 
-    public DemoService(ChatMessageRepository messageRepo, StageProgressRepository progressRepo,
+    public DemoService(ChatMessageRepository messageRepo, QuestProgressRepository progressRepo,
                        UserRegionRepository userRegionRepo, AppUserRepository userRepo,
-                       UserService userService, GachaService gachaService) {
+                       UserService userService, GachaService gachaService, CoinTransactionRepository coins, GachaHistoryRepository history) {
+        this.coins = coins;
+        this.history = history;
         this.messageRepo = messageRepo;
         this.progressRepo = progressRepo;
         this.userRegionRepo = userRegionRepo;
@@ -33,6 +37,8 @@ public class DemoService {
         messageRepo.deleteAllInBatch();
         progressRepo.deleteAllInBatch();
         userRegionRepo.deleteAllInBatch();
+        history.deleteAllInBatch();
+        coins.deleteAllInBatch();
         userRepo.deleteAllInBatch();
     }
 

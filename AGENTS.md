@@ -5,7 +5,7 @@
 AI NPC와 한국어 상황 회화를 하며 미션을 깨는 외국인 대상 서비스. 해커톤 데모용.
 
 ## 기술
-Spring Boot 3.3, Java 17, JPA, H2(메모리), springdoc(Swagger). Lombok 사용 안 함.
+Spring Boot 3.3, Java 17, Spring Data JPA, MySQL 8.4, springdoc(Swagger). Lombok 사용 안 함.
 
 ## 규칙
 - 패키지: controller / service / domain / repository / dto / llm / config / common

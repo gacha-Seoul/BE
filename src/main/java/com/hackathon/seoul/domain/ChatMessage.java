@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(indexes = @Index(name = "idx_message_progress_id", columnList = "quest_progress_id,id"))
 public class ChatMessage {
 
     public enum Role { USER, NPC }
@@ -14,26 +15,23 @@ public class ChatMessage {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private AppUser user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "stage_id", nullable = false)
-    private Stage stage;
+    @JoinColumn(name = "quest_progress_id", nullable = false)
+    private QuestProgress progress;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
 
-    @Column(length = 2000)
+    @Column(nullable = false, length = 2000)
     private String content;
 
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     protected ChatMessage() {}
 
-    public ChatMessage(AppUser user, Stage stage, Role role, String content) {
-        this.user = user;
-        this.stage = stage;
+    public ChatMessage(QuestProgress progress, Role role, String content) {
+        this.progress = progress;
         this.role = role;
         this.content = content;
         this.createdAt = LocalDateTime.now();

@@ -3,6 +3,7 @@ package com.hackathon.seoul.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.List;
+import java.util.Map;
 
 /** 요청/응답 DTO 모음 (해커톤용으로 한 파일에) */
 public final class Dtos {
@@ -10,6 +11,7 @@ public final class Dtos {
 
     // ===== 요청 =====
     public record CreateUserRequest(String nickname, String language, String level) {}
+    public record GachaRequest(String requestId) {}
     public record UserIdRequest(Long userId) {}
     public record ChatRequest(Long userId, String message) {}
 
@@ -23,12 +25,14 @@ public final class Dtos {
 
     // ===== 지역 / 스테이지 =====
     public record MissionStatus(int index, String text, boolean done) {}
+    public record QuestSummary(Long id, String code, String title, int orderNo, String npcRole,
+                               String situation, int rewardCoin, String status, List<MissionStatus> missions) {}
     public record StageSummary(Long id, String category, String categoryLabel, int orderNo,
-                               String place, String npcRole, String situation,
-                               int rewardCoin, boolean cleared, List<MissionStatus> missions) {}
+                               String place, String introStory, String imageUrl, boolean cleared,
+                               int completedQuests, int totalQuests, List<QuestSummary> quests) {}
     public record RegionDetail(Long id, String code, String name, String nameEn, String description,
                                String status, List<StageSummary> stages) {}
-    public record GachaResponse(RegionDetail region, int coinsLeft) {}
+    public record GachaResponse(RegionDetail region, int coinsLeft, String requestId) {}
 
     // ===== 대화 =====
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -40,7 +44,7 @@ public final class Dtos {
     /** LLM이 돌려주는 JSON 형식 */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record LlmTurn(String npcReply, Correction correction, String culturalTip,
-                          List<Suggestion> suggestions, List<Integer> newlyCompletedMissions) {}
+                          List<Suggestion> suggestions, List<Integer> newlyCompletedMissions, Map<String, Object> contextUpdates) {}
 
     public record ChatResponse(
             String npcReply,
@@ -51,9 +55,10 @@ public final class Dtos {
             boolean stageCleared,           // 이번 턴에 클리어?
             boolean regionConquered,        // 이번 턴에 지역 정복?
             int coinsEarned,
-            int coins) {}
+            int coins, Long questId, boolean questCompleted, Map<String, Object> context) {}
 
-    public record StartResponse(String npcReply, List<Suggestion> suggestions, List<MissionStatus> missions) {}
+    public record StartResponse(String npcReply, List<Suggestion> suggestions, List<MissionStatus> missions,
+                                Long questId, String status, Map<String, Object> context) {}
 
     // ===== 현장 표현 카드 =====
     @JsonIgnoreProperties(ignoreUnknown = true)

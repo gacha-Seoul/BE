@@ -3,16 +3,20 @@ package com.hackathon.seoul.service;
 import com.hackathon.seoul.domain.AppUser;
 import com.hackathon.seoul.dto.Dtos.*;
 import com.hackathon.seoul.repository.AppUserRepository;
+import com.hackathon.seoul.repository.CoinTransactionRepository;
+import com.hackathon.seoul.domain.CoinTransaction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
     private final AppUserRepository userRepo;
+    private final CoinTransactionRepository coins;
     private final Finder finder;
     private final GameProperties props;
 
-    public UserService(AppUserRepository userRepo, Finder finder, GameProperties props) {
+    public UserService(AppUserRepository userRepo, Finder finder, GameProperties props, CoinTransactionRepository coins) {
+        this.coins = coins;
         this.userRepo = userRepo;
         this.finder = finder;
         this.props = props;
@@ -24,6 +28,8 @@ public class UserService {
         String language = (req == null || req.language() == null || req.language().isBlank()) ? "English" : req.language();
         String level = (req == null || req.level() == null || req.level().isBlank()) ? "BEGINNER" : req.level();
         AppUser user = userRepo.save(new AppUser(nickname, language, level, props.initialCoins));
+        coins.save(new CoinTransaction(user, props.initialCoins,
+                CoinTransaction.Type.INITIAL, "INITIAL:" + user.getId()));
         return toResponse(user);
     }
 

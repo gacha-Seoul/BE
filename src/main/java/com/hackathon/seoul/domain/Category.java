@@ -1,6 +1,6 @@
 package com.hackathon.seoul.domain;
 
-/** 주최 측 소재의 5개 분야 = 지역별 5개 스테이지 */
+/** 주최 측 소재의 5개 분야. 각 분야에 장소 여러 개를 등록할 수 있다. */
 public enum Category {
     HISTORY("역사"),
     CULTURE("문화"),

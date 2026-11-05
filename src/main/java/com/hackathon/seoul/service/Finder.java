@@ -28,6 +28,12 @@ public class Finder {
                 .orElseThrow(() -> new GameException(HttpStatus.NOT_FOUND, "유저가 없어요: " + id));
     }
 
+    public AppUser lockedUser(Long id) {
+        if (id == null) throw new GameException(HttpStatus.BAD_REQUEST, "userId가 필요해요.");
+        return userRepo.findLockedById(id)
+                .orElseThrow(() -> new GameException(HttpStatus.NOT_FOUND, "유저가 없어요: " + id));
+    }
+
     public Region region(Long id) {
         return regionRepo.findById(id)
                 .orElseThrow(() -> new GameException(HttpStatus.NOT_FOUND, "지역이 없어요: " + id));

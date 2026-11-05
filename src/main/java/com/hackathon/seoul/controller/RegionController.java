@@ -14,7 +14,7 @@ public class RegionController {
         this.regionService = regionService;
     }
 
-    /** 지역 상세 + 5개 분야 스테이지 + 내 진행 상황 */
+    /** 지역 상세 + 장소·퀘스트 + 내 진행 상황 */
     @GetMapping("/{regionId}")
     public RegionDetail detail(@PathVariable Long regionId, @RequestParam Long userId) {
         return regionService.detail(userId, regionId);

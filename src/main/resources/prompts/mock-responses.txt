@@ -1,0 +1,154 @@
+{
+  "ALL_MISSIONS": [
+    {
+      "npcReply": "안녕하세요. 무엇을 도와드릴까요?",
+      "correction": null,
+      "culturalTip": null,
+      "suggestions": [],
+      "newlyCompletedMissions": [
+        0
+      ],
+      "contextUpdates": {}
+    },
+    {
+      "npcReply": "네, 안내해 드릴게요.",
+      "correction": null,
+      "culturalTip": null,
+      "suggestions": [],
+      "newlyCompletedMissions": [
+        1
+      ],
+      "contextUpdates": {}
+    },
+    {
+      "npcReply": "좋아요. 확인했어요.",
+      "correction": null,
+      "culturalTip": null,
+      "suggestions": [],
+      "newlyCompletedMissions": [
+        2
+      ],
+      "contextUpdates": {}
+    },
+    {
+      "npcReply": "감사합니다. 또 오세요!",
+      "correction": null,
+      "culturalTip": null,
+      "suggestions": [],
+      "newlyCompletedMissions": [
+        3
+      ],
+      "contextUpdates": {}
+    }
+  ],
+  "FIND_STORE": [
+    {
+      "npcReply": "빨간 천막 지나서 방앗간 옆이에요.",
+      "correction": null,
+      "culturalTip": null,
+      "suggestions": [],
+      "newlyCompletedMissions": [],
+      "contextUpdates": {}
+    },
+    {
+      "npcReply": "전집에 도착했어요.",
+      "correction": null,
+      "culturalTip": null,
+      "suggestions": [],
+      "newlyCompletedMissions": [],
+      "contextUpdates": {
+        "arrivedAt": "JEON_STORE"
+      }
+    }
+  ],
+  "ACCEPT_SAMPLE": [
+    {
+      "npcReply": "네, 여기 잘라 놓은 거 드셔 보세요.",
+      "correction": null,
+      "culturalTip": null,
+      "suggestions": [],
+      "newlyCompletedMissions": [],
+      "contextUpdates": {
+        "sampleAccepted": true
+      }
+    }
+  ],
+  "CONFIRM_NEGOTIATION": [
+    {
+      "npcReply": "두 팩에 만 원이에요.",
+      "correction": null,
+      "culturalTip": null,
+      "suggestions": [],
+      "newlyCompletedMissions": [],
+      "contextUpdates": {
+        "selectedItem": "PUMPKIN_JEON",
+        "quantity": 2
+      }
+    },
+    {
+      "npcReply": "두 팩에 구천 원에 드릴게요.",
+      "correction": null,
+      "culturalTip": null,
+      "suggestions": [],
+      "newlyCompletedMissions": [],
+      "contextUpdates": {
+        "negotiationRequested": true
+      }
+    },
+    {
+      "npcReply": "하나씩 따로 담았어요. 순대는 입구 쪽 분식집에서 사면 돼요.",
+      "correction": null,
+      "culturalTip": null,
+      "suggestions": [],
+      "newlyCompletedMissions": [],
+      "contextUpdates": {
+        "purchaseConfirmed": true
+      }
+    }
+  ],
+  "CONFIRM_ORDER": [
+    {
+      "npcReply": "간도 넣어드려요?",
+      "correction": null,
+      "culturalTip": null,
+      "suggestions": [],
+      "newlyCompletedMissions": [],
+      "contextUpdates": {
+        "item": "SUNDAE",
+        "quantity": 1
+      }
+    },
+    {
+      "npcReply": "여기서 드세요?",
+      "correction": null,
+      "culturalTip": null,
+      "suggestions": [],
+      "newlyCompletedMissions": [],
+      "contextUpdates": {
+        "excludeLiver": true
+      }
+    },
+    {
+      "npcReply": "네, 순대만 포장해 드릴게요.",
+      "correction": null,
+      "culturalTip": null,
+      "suggestions": [],
+      "newlyCompletedMissions": [],
+      "contextUpdates": {
+        "takeout": true,
+        "orderConfirmed": true
+      }
+    }
+  ],
+  "PHRASE_CARD": {
+    "title": "오늘 배운 표현",
+    "phrases": [
+      {
+        "korean": "포장해 주세요",
+        "romanization": "pojanghae juseyo",
+        "meaning": "To go, please.",
+        "whenToUse": "When ordering takeaway"
+      }
+    ]
+  }
+}

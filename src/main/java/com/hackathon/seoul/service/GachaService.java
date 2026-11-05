@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
 @Service
 public class GachaService {
 
+    private final GachaHistoryRepository historyRepo;
+    private final CoinTransactionRepository coinRepo;
     private final Finder finder;
     private final RegionRepository regionRepo;
     private final UserRegionRepository userRegionRepo;
@@ -26,7 +28,9 @@ public class GachaService {
     private final Random random = new SecureRandom();
 
     public GachaService(Finder finder, RegionRepository regionRepo, UserRegionRepository userRegionRepo,
-                        RegionService regionService, GameProperties props) {
+                        RegionService regionService, GameProperties props, GachaHistoryRepository historyRepo, CoinTransactionRepository coinRepo) {
+        this.historyRepo = historyRepo;
+        this.coinRepo = coinRepo;
         this.finder = finder;
         this.regionRepo = regionRepo;
         this.userRegionRepo = userRegionRepo;
@@ -35,8 +39,19 @@ public class GachaService {
     }
 
     @Transactional
-    public GachaResponse draw(Long userId) {
-        AppUser user = finder.user(userId);
+    public GachaResponse draw(Long userId) { return draw(userId, java.util.UUID.randomUUID().toString()); }
+
+    @Transactional
+    public GachaResponse draw(Long userId, String requestId) {
+        if (requestId == null || requestId.isBlank() || requestId.length() > 100) {
+            throw new GameException(HttpStatus.BAD_REQUEST, "requestId는 1~100자여야 해요.");
+        }
+        AppUser user = finder.lockedUser(userId);
+        Optional<GachaHistory> previous = historyRepo.findByUserIdAndRequestId(userId, requestId);
+        if (previous.isPresent()) {
+            GachaHistory old = previous.get();
+            return new GachaResponse(regionService.buildDetail(userId, old.getRegion()), old.getCoinsLeft(), requestId);
+        }
 
         List<UserRegion> mine = userRegionRepo.findByUserId(userId);
         Set<Long> owned = mine.stream().map(ur -> ur.getRegion().getId()).collect(Collectors.toSet());
@@ -55,7 +70,10 @@ public class GachaService {
                 .orElseGet(() -> candidates.get(random.nextInt(candidates.size())));
 
         userRegionRepo.save(new UserRegion(user, picked));
-        return new GachaResponse(regionService.buildDetail(userId, picked), user.getCoins());
+        historyRepo.save(new GachaHistory(user, picked, props.gachaCost, requestId));
+        coinRepo.save(new CoinTransaction(user, -props.gachaCost, CoinTransaction.Type.GACHA,
+                "GACHA:" + userId + ":" + requestId));
+        return new GachaResponse(regionService.buildDetail(userId, picked), user.getCoins(), requestId);
     }
 
     /** 데모 안정성: 첫 가챠는 설정한 지역(서대문구)으로 고정 */

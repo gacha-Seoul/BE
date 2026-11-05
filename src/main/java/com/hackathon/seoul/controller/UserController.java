@@ -38,7 +38,7 @@ public class UserController {
 
     /** 가챠 1회 */
     @PostMapping("/{userId}/gacha")
-    public GachaResponse gacha(@PathVariable Long userId) {
-        return gachaService.draw(userId);
+    public GachaResponse gacha(@PathVariable Long userId, @RequestBody GachaRequest req) {
+        return gachaService.draw(userId, req.requestId());
     }
 }

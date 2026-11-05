@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 
 @Entity
 @Table(name = "app_user")
+@org.hibernate.annotations.Check(constraints = "coins >= 0")
 public class AppUser {
 
     @Id
@@ -15,7 +16,11 @@ public class AppUser {
     private String nickname;
     private String language;   // 교정 설명을 쓸 언어 (English, 日本語, 中文 ...)
     private String level;      // BEGINNER / INTERMEDIATE / ADVANCED
+    @Column(nullable = false)
     private int coins;
+
+    @Version
+    private Long version;
 
     protected AppUser() {}
 
@@ -26,9 +31,13 @@ public class AppUser {
         this.coins = coins;
     }
 
-    public void addCoins(int amount) { this.coins += amount; }
+    public void addCoins(int amount) {
+        if (amount < 0) throw new IllegalArgumentException("amount must be non-negative");
+        this.coins = Math.addExact(this.coins, amount);
+    }
 
     public void spendCoins(int amount) {
+        if (amount < 0) throw new IllegalArgumentException("amount must be non-negative");
         if (coins < amount) {
             throw new GameException(HttpStatus.BAD_REQUEST, "코인이 부족해요. (보유 " + coins + " / 필요 " + amount + ")");
         }
