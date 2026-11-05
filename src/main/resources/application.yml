@@ -1,0 +1,40 @@
+server:
+  port: 8080
+
+spring:
+  config:
+    import: optional:file:.env[.properties]   # 프로젝트 루트의 .env 자동 읽기 (없어도 실행됨)
+  datasource:
+    # 메모리 DB: 서버 재시작하면 유저/진행 기록 초기화
+    url: jdbc:h2:mem:seoul;MODE=MySQL;DB_CLOSE_DELAY=-1
+    # 파일 DB로 바꾸려면 위 줄 대신: jdbc:h2:file:./data/seoul;MODE=MySQL  (+ ddl-auto: update, data.sql 중복 주의)
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    defer-datasource-initialization: true   # 테이블 생성 후 data.sql 실행
+    open-in-view: false
+  sql:
+    init:
+      encoding: UTF-8
+  h2:
+    console:
+      enabled: true          # http://localhost:8080/h2-console  (JDBC URL: jdbc:h2:mem:seoul, user: sa)
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html   # http://localhost:8080/swagger-ui.html
+
+llm:
+  mock: ${LLM_MOCK:true}                                # 키 없이도 동작. 실제 AI는 LLM_MOCK=false
+  base-url: ${LLM_BASE_URL:https://api.openai.com/v1}   # OpenAI 호환 API면 변경 가능
+  api-key: ${LLM_API_KEY:}
+  model: ${LLM_MODEL:gpt-4o-mini}
+  timeout-seconds: ${LLM_TIMEOUT_SECONDS:15}            # 넘으면 기본 응답으로 대체 (데모 중 멈춤 방지)
+
+game:
+  initial-coins: 3          # 가입 시 코인 (첫 가챠용)
+  gacha-cost: 3             # 가챠 1회 비용
+  region-conquer-bonus: 2   # 지역 정복 보너스
+  first-region-code: SEODAEMUN   # 첫 가챠는 무조건 서대문구 (데모 안정성). 비우면 완전 랜덤
