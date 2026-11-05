@@ -5,38 +5,38 @@ import com.hackathon.seoul.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** 리허설/발표용: 기록 초기화, 유저 생성 + 첫 가챠를 한 번에 */
+/** 리허설/발표용: 기록 초기화, 유저 생성 + 첫 뽑기를 한 번에 */
 @Service
 public class DemoService {
 
     private final ChatMessageRepository messageRepo;
-    private final StageProgressRepository progressRepo;
-    private final UserRegionRepository userRegionRepo;
+    private final QuestProgressRepository progressRepo;
+    private final UserCourseRepository userCourseRepo;
     private final AppUserRepository userRepo;
     private final UserService userService;
     private final GachaService gachaService;
 
-    public DemoService(ChatMessageRepository messageRepo, StageProgressRepository progressRepo,
-                       UserRegionRepository userRegionRepo, AppUserRepository userRepo,
+    public DemoService(ChatMessageRepository messageRepo, QuestProgressRepository progressRepo,
+                       UserCourseRepository userCourseRepo, AppUserRepository userRepo,
                        UserService userService, GachaService gachaService) {
         this.messageRepo = messageRepo;
         this.progressRepo = progressRepo;
-        this.userRegionRepo = userRegionRepo;
+        this.userCourseRepo = userCourseRepo;
         this.userRepo = userRepo;
         this.userService = userService;
         this.gachaService = gachaService;
     }
 
-    /** 모든 유저 기록 삭제 (지역/스테이지 데이터는 유지) */
+    /** 모든 유저 기록 삭제 (코스·장소·퀘스트 데이터는 유지) */
     @Transactional
     public void resetAll() {
         messageRepo.deleteAllInBatch();
         progressRepo.deleteAllInBatch();
-        userRegionRepo.deleteAllInBatch();
+        userCourseRepo.deleteAllInBatch();
         userRepo.deleteAllInBatch();
     }
 
-    /** 새 유저 생성 + 첫 가챠(서대문구) */
+    /** 새 유저 + 첫 뽑기(서대문구 · 문화) */
     @Transactional
     public DemoStartResponse start(CreateUserRequest req) {
         UserResponse user = userService.create(req);

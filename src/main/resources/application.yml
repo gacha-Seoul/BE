@@ -34,7 +34,8 @@ llm:
   timeout-seconds: ${LLM_TIMEOUT_SECONDS:15}            # 넘으면 기본 응답으로 대체 (데모 중 멈춤 방지)
 
 game:
-  initial-coins: 3          # 가입 시 코인 (첫 가챠용)
-  gacha-cost: 3             # 가챠 1회 비용
-  region-conquer-bonus: 2   # 지역 정복 보너스
-  first-region-code: SEODAEMUN   # 첫 가챠는 무조건 서대문구 (데모 안정성). 비우면 완전 랜덤
+  initial-coins: 0               # 시작 코인 (퀘스트 0개 = 코인 0)
+  free-draws: 5                  # 무료 뽑기 횟수
+  draw-cost: 1                   # 무료 소진 후 뽑기 1회 = 코인 1개
+  draw-requires-quest: true      # 재뽑기 불가: 뽑은 뒤 퀘스트 1개 이상 완료해야 다음 뽑기
+  first-course: SEODAEMUN-CULTURE  # 첫 뽑기 고정 (구코드-카테고리). 비우면 완전 랜덤
